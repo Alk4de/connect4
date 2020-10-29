@@ -12,6 +12,9 @@ bool vs_computer( void );
 int **init_field( void );
 int human_input( void );
 void print_field( int **field );
+int **insert_marker( int **field, int player);
+bool valid_choice( int **field, int column );
+
 
 int main( void ) {
 
@@ -102,7 +105,4 @@ void print_field( int **field ) {
     printf("|");
     printf("\n");
   }
-
-
-
 }
