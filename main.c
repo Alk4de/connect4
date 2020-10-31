@@ -8,27 +8,22 @@
 #define ROWS 6
 #define COLUMNS 7
 
-bool vs_computer( void );
 int **init_field( void );
 int human_input( void );
 void print_field( int **field );
-int **insert_marker( int **field, int player);
+int **insert_marker( int **field, int column, int player);
 bool valid_choice( int **field, int column );
-
+bool game_over( int **field );
+bool game_over_column( int **field, int column );
+bool check_straight( int **field, int column );
+bool check_diagonal( int **field, int column );
 
 int main( void ) {
 
-  bool b = vs_computer();
-
-  if (b) {
-    printf("Chose vs player\n");
-  } else {
-    printf("Chose vs computer\n");
-  }
 
   int **field = init_field();
-
   int col = 0;
+  int current_player = X;
 
   while (1) {
 
@@ -36,29 +31,87 @@ int main( void ) {
 
     if ((col = human_input()) == -1) {
       break;
+    } else if (col == 0) {
+      printf("Invalid input\n");
+    } else {
+      if (valid_choice(field, col-1)) {
+        field = insert_marker(field, col-1, current_player);
+        
+        if (current_player == X) {
+          current_player = O;
+        } else {
+          current_player = X;
+        }
+
+      } else {
+        printf("Invalid choice\n");
+      }
     }
-    printf("%d\n",col);
+    
+    if (game_over(field)) {
+      print_field(field);
+      printf("Game finished!\n");
+      break;
+    }
   }
 
   return 0;
 }
 
 
-
-bool vs_computer( void ) {
-
-  fprintf(stderr, "(enter) to play vs another player, anything else to play vs computer\n");
-
-  char c = fgetc(stdin);
-  fflush(stdin);
-
-  if (c == '\n') {
-    return true;
-  } else {
-    return false;
+bool game_over( int **field ) {
+  
+  for (int i = 0; i < COLUMNS; i++) {
+    if (check_straight(field, i)) {
+      return true;
+    }
   }
+  return false;
 }
 
+bool check_straight( int **field, int column ) {
+  int x = 0;
+  int o = 0;
+
+  for (int i = 0; i < ROWS; i++) {
+    if (field[i][column] == X) {
+      x++;
+      if (x == 4) {
+        return true;
+      }
+    } else {
+      x = 0;
+    }
+    if (field[i][column] == O) {
+      o++;
+      if (o == 4) {
+        return true;
+      }
+    } else {
+      o = 0;
+    }
+  }
+  return false;
+}
+
+
+int **insert_marker( int **field, int column, int player ) {
+  
+  for (int i = 0; i < ROWS-1; i++) {
+    if (field[i+1][column] != BLANK) {
+      field[i][column] = player;
+      return field; 
+    }
+  }
+  field[ROWS-1][column] = player;
+  return field;
+}
+
+
+
+bool valid_choice( int **field, int column ) {
+  return (field[0][column] == BLANK);
+}
 
 int **init_field( void ) {
 
@@ -90,6 +143,9 @@ int human_input( void ) {
 }
 
 void print_field( int **field ) {
+  
+  printf("| 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n");
+  printf(" ___ ___ ___ ___ ___ ___ ___ \n");
 
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLUMNS; j++) {
