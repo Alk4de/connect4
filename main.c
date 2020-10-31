@@ -2,6 +2,12 @@
 #include<stdbool.h>
 #include<stdlib.h>
 
+/* Created by Alk4de
+ * Date: 2020-10-31
+ *
+ * A simple connect 4 game.
+ */
+
 #define O 2
 #define X 1
 #define BLANK 0
@@ -14,7 +20,6 @@ void print_field( int **field );
 int **insert_marker( int **field, int column, int player);
 bool valid_choice( int **field, int column );
 bool game_over( int **field, int player );
-
 bool check_coord( int **field, int column , int row, int player);
 int check_dir( int **field, int column, int row, int player, int x_offset, int y_offset);
 bool check_boundaries( int column, int row );
